@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+
+  react-app:
+    image: innoclinic-react-app
+    ports:
+      - 3000:3000
+    
+  ocelot-api-gateway:
+    image: ocelot-api-gateway
+    ports:
+      - 7452:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - JWT_SigningKey=${JWT_SigningKey}
+      - JWT_AUTHORITY=${JWT_AUTHORITY}
+      - JWT_AUDIENCE=${JWT_AUDIENCE}
+
+  users-microservice:
+    image: users-microservice
+    ports:
+      - 8086:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - JWT_SigningKey=${JWT_SigningKey}
+      - NEON_DB_PASSWORD=${NEON_DB_PASSWORD}
+
+  authmicroservice.webapi:
+    image: auth-microservice
+    ports:
+      - 8084:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - JWT_SigningKey=${JWT_SigningKey}
+      - JWT_AUTHORITY=${JWT_AUTHORITY}
+      - JWT_AUDIENCE=${JWT_AUDIENCE}
+      - NEON_DB_PASSWORD=${NEON_DB_PASSWORD}
+
+  appointments-microservice:
+    image: appointments-rest-microservice
+    ports:
+      - 8085:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - JWT_SigningKey=${JWT_SigningKey}
+      - NEON_DB_PASSWORD=${NEON_DB_PASSWORD}
+
+  reviews-microservice:
+    image: reviews-microservice
+    ports:
+      - 8080:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - JWT_SigningKey=${JWT_SigningKey}
+      - MONGO_DB_CONNECTION=${MONGO_DB_CONNECTION}

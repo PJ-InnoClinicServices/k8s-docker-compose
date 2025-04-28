@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  ASPNETCORE_ENVIRONMENT: "Container"
+  JWT_SigningKey: "key"
+  JWT_AUTHORITY: "https://localhost:44330"
+  JWT_AUDIENCE: "your-api"
+  NEON_DB_PASSWORD: "neon db password"
+  MONGO_DB_CONNECTION: "connection_string"
