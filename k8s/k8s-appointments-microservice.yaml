@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointments-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appointments-microservice
+  template:
+    metadata:
+      labels:
+        app: appointments-microservice
+    spec:
+      containers:
+        - name: appointments-microservice
+          image: docker.io/library/appointments-rest-microservice:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: ASPNETCORE_ENVIRONMENT
+            - name: JWT_SigningKey
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: JWT_SigningKey
+            - name: NEON_DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: NEON_DB_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appointments-microservice
+spec:
+  selector:
+    app: appointments-microservice
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer

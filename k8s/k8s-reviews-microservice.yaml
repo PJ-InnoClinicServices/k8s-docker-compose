@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reviews-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reviews-microservice
+  template:
+    metadata:
+      labels:
+        app: reviews-microservice
+    spec:
+      containers:
+        - name: reviews-microservice
+          image: docker.io/library/reviews-microservice
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: ASPNETCORE_ENVIRONMENT
+            - name: JWT_SigningKey
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: JWT_SigningKey
+            - name: MONGO_DB_CONNECTION
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: MONGO_DB_CONNECTION
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reviews-microservice
+spec:
+  selector:
+    app: reviews-microservice
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authmicroservice-webapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authmicroservice-webapi
+  template:
+    metadata:
+      labels:
+        app: authmicroservice-webapi
+    spec:
+      containers:
+        - name: authmicroservice-webapi
+          image: docker.io/library/auth-microservice
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: ASPNETCORE_ENVIRONMENT
+            - name: JWT_SigningKey
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: JWT_SigningKey
+            - name: JWT_AUTHORITY
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: JWT_AUTHORITY
+            - name: JWT_AUDIENCE
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: JWT_AUDIENCE
+            - name: NEON_DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: NEON_DB_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authmicroservice-webapi
+spec:
+  selector:
+    app: authmicroservice-webapi
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
